@@ -3,5 +3,5 @@ type Mutation {
 }
 
 type Query {
-  hi: String!
+  hello: String!
 }
