@@ -30,8 +30,27 @@ const CreateItem = () => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
-  const [largeImage, setLargeImage] = useState(null);
+  const [image, setImage] = useState("");
+  const [largeImage, setLargeImage] = useState("");
+
+  const uploadFile = async (e) => {
+    const files = e.target.files;
+    const data = new FormData();
+    data.append("file", files[0]);
+    data.append("upload_preset", "sickfits"); // for cloundinary
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dsuu1l1xq/image/upload",
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+    const file = await res.json();
+    console.log(file);
+    setImage(file.secure_url);
+    setLargeImage(file.eager[0].secure_url);
+  };
 
   return (
     <Mutation
@@ -54,6 +73,16 @@ const CreateItem = () => {
         >
           <Error error={error}></Error>
           <fieldset disabled={loading} aria-busy={loading}>
+            <label htmlFor="file">Image</label>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              placeholder="Upload an Image"
+              required
+              onChange={(e) => uploadFile(e)}
+            />
+            {image && <img src={image} width="200" alt="Upload Preview"></img>}
             <label htmlFor="title">Title</label>
             <input
               type="text"
